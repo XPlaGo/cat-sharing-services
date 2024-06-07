@@ -1,0 +1,73 @@
+spring:
+  application:
+    name: transaction-service
+  datasource:
+    url: jdbc:postgresql://localhost:1001/catsharing
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+  kafka:
+#    consumer:
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+#      properties:
+#        spring:
+#          json:
+#            add:
+#              type:
+#                headers: false
+#            type:
+#              mapping: transactionModel:ru.xplago.common.kafka.models.transaction.TransactionModel
+#            trusted.packages: ru.xplago
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring:
+          json:
+            add:
+              type:
+                headers: false
+            type:
+              mapping: transactionModel:ru.xplago.common.kafka.models.transaction.TransactionModel
+            trusted.packages: ru.xplago
+    jaas:
+      enabled: true
+    properties:
+      security:
+        protocol: SASL_PLAINTEXT
+      sasl:
+        mechanism: PLAIN
+        jaas:
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";
+    streams:
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.springframework.kafka.support.serializer.JsonSerde
+        spring.json.trusted.packages: ru.xplago.common.kafka.models.transaction.TransactionModel
+        spring.json.add.type.headers: false
+
+
+grpc:
+  server:
+    port: ${TRANSACTION_SERVICE_GRPC_PORT:9094}
+  client:
+    paymentService:
+      negotiation-type: PLAINTEXT
+      address: localhost:9093
+  jwt:
+    algorithm: HmacSHA256
+    secret: 357638792F423F4428472B4B6250655368566D597133743677397A2443264629
+    expiration-sec: 3600

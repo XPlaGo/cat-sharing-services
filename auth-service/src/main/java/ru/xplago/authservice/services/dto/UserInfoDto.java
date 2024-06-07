@@ -14,7 +14,7 @@ public class UserInfoDto {
     private Long id;
     private String email;
     private String name;
-    private Timestamp birthdate;
+    private Timestamp birthday;
     private String avatar;
     private boolean isBlocked;
 

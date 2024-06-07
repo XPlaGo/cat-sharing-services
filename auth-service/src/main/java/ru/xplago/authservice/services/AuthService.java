@@ -1,7 +1,6 @@
 package ru.xplago.authservice.services;
 
 import lombok.AllArgsConstructor;
-import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.xplago.authservice.entities.User;
@@ -11,8 +10,11 @@ import ru.xplago.authservice.exceptions.UserNotFoundException;
 import ru.xplago.authservice.services.dto.*;
 import ru.xplago.common.grpc.security.services.JwtService;
 import ru.xplago.common.grpc.security.services.dto.JwtData;
+import ru.xplago.common.grpc.validation.validators.ModelValidator;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,17 +23,26 @@ public class AuthService {
     private UserService userService;
     private JwtService jwtService;
     private CryptoService cryptoService;
+    private ModelValidator modelValidator;
 
     public TokenWithUserDto signIn(SignInDto signInDto) {
+
+        modelValidator.validate(signInDto);
+
         User user = userService.findByEmail(signInDto.getEmail());
 
         if (user == null) throw new UserNotFoundException("User not found");
 
-        if (!cryptoService.verify(signInDto.getPassword(), user.getSalt(), user.getPassword()))
-            throw new InvalidPasswordException("Invalid password");
+        if (!cryptoService.verify(signInDto.getPassword(), user.getSalt(), user.getPassword())) {
+            Map<String, Map<String, String>> errors = new HashMap<>();
+            Map<String, String> passwordError = new HashMap<>();
+            passwordError.put("message", "Invalid password");
+            errors.put("password", passwordError);
+            throw new InvalidPasswordException("Unsuccessful sign in attempt", errors);
+        }
 
         String accessToken = jwtService.generate(new JwtData(
-                user.getEmail(),
+                user.getId().toString(),
                 user.getRoles().stream().map(Enum::toString).collect(Collectors.toSet())
         ));
 
@@ -39,6 +50,8 @@ public class AuthService {
     }
 
     public TokenWithUserDto signUp(SignUpDto signUpDto) {
+
+        modelValidator.validate(signUpDto);
 
         List<UserRole> userRoles = List.of(UserRole.ROLE_USER);
 
@@ -53,18 +66,18 @@ public class AuthService {
         ));
 
         String accessToken = jwtService.generate(new JwtData(
-                user.getEmail(),
+                user.getId().toString(),
                 user.getRoles().stream().map(Enum::toString).collect(Collectors.toSet())
         ));
 
         return new TokenWithUserDto(accessToken, UserInfoDto.fromUser(user));
     }
 
-    public TokenWithUserDto refresh(String email) {
-        User user = userService.findByEmail(email);
+    public TokenWithUserDto refresh(Long userId) {
+        User user = userService.findById(userId);
 
         String accessToken = jwtService.generate(new JwtData(
-                user.getEmail(),
+                user.getId().toString(),
                 user.getRoles().stream().map(Enum::toString).collect(Collectors.toSet())
         ));
 

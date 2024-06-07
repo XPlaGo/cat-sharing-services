@@ -5,24 +5,16 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Program Files/Gradle" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/auth-service" />
+            <option value="$PROJECT_DIR$/cat-service" />
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/mail-service" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/mail-service" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/auth-service" />
-            <option value="$PROJECT_DIR$/common" />
-            <option value="$PROJECT_DIR$/mail-service" />
+            <option value="$PROJECT_DIR$/payment-service" />
+            <option value="$PROJECT_DIR$/trade-service" />
+            <option value="$PROJECT_DIR$/transaction-service" />
           </set>
         </option>
       </GradleProjectSettings>

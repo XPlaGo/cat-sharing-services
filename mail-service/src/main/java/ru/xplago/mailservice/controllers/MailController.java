@@ -25,7 +25,7 @@ public class MailController {
     @Bean
     public NewTopic topic() {
         return TopicBuilder.name("verificationCode")
-                .partitions(10)
+                .partitions(1)
                 .replicas(1)
                 .build();
     }

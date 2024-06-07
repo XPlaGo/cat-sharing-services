@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package xplago;
+
+option java_package = "ru.xplago.common.grpc.cat";
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+message OwnerInfo {
+  int64 id = 1;
+  int64 userId = 2;
+  repeated int64 cats_ids = 3;
+  repeated int64 rented_cats_ids = 4;
+}
+
+message CatInfo {
+  int64 id = 1;
+  string name = 2;
+  google.protobuf.Timestamp birthday = 3;
+  int64 ownerId = 4;
+  google.protobuf.Int64Value tenantId = 5;
+  string avatarId = 6;
+}
+
+message GetCatRequest {
+  int64 id = 1;
+}
+
+message CreateCatRequest {
+  string name = 1;
+  google.protobuf.Timestamp birthday = 2;
+  string avatarId = 3;
+}
+
+service OwnerService {
+  rpc getMyOwner(google.protobuf.Empty) returns (OwnerInfo);
+  rpc myOwnerExists(google.protobuf.Empty) returns (google.protobuf.BoolValue);
+  rpc createMyOwner(google.protobuf.Empty) returns (OwnerInfo);
+  rpc getOwnerByUserId(google.protobuf.Int64Value) returns (OwnerInfo);
+  rpc getOwnerById(google.protobuf.Int64Value) returns (OwnerInfo);
+}
+
+service CatService {
+  rpc getCat(GetCatRequest) returns (CatInfo);
+  rpc getCatById(google.protobuf.Int64Value) returns (CatInfo);
+  rpc getCats(stream GetCatRequest) returns (stream CatInfo);
+  rpc createCat(CreateCatRequest) returns (CatInfo);
+}

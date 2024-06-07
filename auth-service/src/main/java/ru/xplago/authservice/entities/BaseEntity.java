@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Getter
@@ -21,6 +22,6 @@ public class BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
-    private Date created;
-    private Date modified;
+    private Timestamp created;
+    private Timestamp modified;
 }

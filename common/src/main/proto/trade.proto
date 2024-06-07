@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package xplago;
+
+option java_package = "ru.xplago.common.grpc.trade";
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+import "payment.proto";
+
+message CreateSaleOfferRequest {
+  int64 catId = 1;
+  Money price = 2;
+  string comment = 3;
+}
+
+message SaleOfferInfo {
+  string id = 1;
+  int64 catId = 2;
+  Money price = 3;
+  string comment = 4;
+  int64 sellerOwnerId = 5;
+  string status = 6;
+  google.protobuf.Timestamp created = 7;
+  google.protobuf.Timestamp modified = 8;
+}
+
+message SaleOfferFullInfo {
+  string id = 1;
+  CatShortInfo cat = 2;
+  Money price = 3;
+  string comment = 4;
+  int64 sellerOwnerId = 5;
+  string status = 6;
+  google.protobuf.Timestamp created = 7;
+  google.protobuf.Timestamp modified = 8;
+}
+
+message CatShortInfo {
+  int64 id = 1;
+  string name = 2;
+  google.protobuf.Timestamp birthday = 3;
+  int64 ownerId = 4;
+  string avatarId = 6;
+}
+
+message BuyTransactionInfo {
+  string status = 1;
+  optional string reason = 2;
+}
+
+message BuyRequest {
+  string saleOfferId = 1;
+}
+
+service SaleOfferService {
+  rpc createSaleOffer(CreateSaleOfferRequest) returns (SaleOfferInfo);
+  rpc getSaleOfferById(google.protobuf.StringValue) returns (SaleOfferInfo);
+  rpc getSaleFullOfferById(google.protobuf.StringValue) returns (SaleOfferFullInfo);
+  rpc getSaleOfferByCatId(google.protobuf.Int64Value) returns (SaleOfferInfo);
+  rpc getSaleOffersIds(google.protobuf.Empty) returns (stream google.protobuf.StringValue);
+  rpc buy(BuyRequest) returns (stream BuyTransactionInfo);
+}

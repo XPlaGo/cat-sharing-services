@@ -80,11 +80,9 @@ public class AllowedCollector implements BeanPostProcessor {
     private String getGrpcServiceDescriptor(Class<?> gRpcServiceClass, Method method) {
         final Class<?> superClass = gRpcServiceClass.getSuperclass();
 
-        String[] p = superClass.getPackage().getName().split("\\" + PACKAGE_CLASS_DELIMITER);
-        String methodName = (superClass.getPackage().getName().split("\\" + PACKAGE_CLASS_DELIMITER)[1]
+        return (superClass.getPackage().getName().split("\\" + PACKAGE_CLASS_DELIMITER)[1]
                 + PACKAGE_CLASS_DELIMITER
                 + superClass.getSimpleName().replace(GRPC_BASE_CLASS_NAME_EXT, EMPTY_STRING)
                 + CLASS_METHOD_DELIMITER + method.getName()).toLowerCase();
-        return methodName;
     }
 }

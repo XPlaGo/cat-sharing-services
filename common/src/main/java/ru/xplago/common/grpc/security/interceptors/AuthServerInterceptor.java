@@ -92,6 +92,8 @@ public class AuthServerInterceptor implements ServerInterceptor {
                             SecurityContextHolder.getContext().setAuthentication(
                                     new UsernamePasswordAuthenticationToken(contextData.getUserId(), contextData.getRoles())
                             );
+                        } else {
+                            System.out.println("Context data is null");
                         }
                         delegate = customDelegate;
                     }
@@ -115,7 +117,7 @@ public class AuthServerInterceptor implements ServerInterceptor {
         final boolean methodIsExposed = Arrays.stream(environment.getActiveProfiles())
                 .anyMatch(exposedToEnvironments::contains);
 
-        if(methodIsExposed) {
+        if (methodIsExposed) {
             if(contextData == null) throw new AuthException("Missing JWT data.");
 
             final List<String> rawEnvironments = (List<String>) contextData

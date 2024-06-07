@@ -9,6 +9,8 @@ import ru.xplago.authservice.exceptions.UserNotFoundException;
 import ru.xplago.authservice.repositories.UserRepository;
 import ru.xplago.authservice.services.dto.UserCreateDto;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Date;
 
 @Service
@@ -57,8 +59,8 @@ public class UserService {
                 .roles(userCreateDto.getRoles())
                 .avatar(userCreateDto.getAvatar())
                 .isBlocked(userCreateDto.isBlocked())
-                .created(new Date())
-                .modified(new Date())
+                .created(Timestamp.from(Instant.now()))
+                .modified(Timestamp.from(Instant.now()))
                 .build());
     }
 }

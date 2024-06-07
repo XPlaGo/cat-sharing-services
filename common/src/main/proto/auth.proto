@@ -57,3 +57,11 @@ service AuthService {
   rpc signIn(SignInRequest) returns (TokenWithUserResponse);
   rpc refresh(google.protobuf.Empty) returns (TokenWithUserResponse);
 }
+
+message GetUserByEmailRequest {
+  string email = 1;
+}
+
+service UserService {
+  rpc getUserByEmail(GetUserByEmailRequest) returns (UserInfo);
+}

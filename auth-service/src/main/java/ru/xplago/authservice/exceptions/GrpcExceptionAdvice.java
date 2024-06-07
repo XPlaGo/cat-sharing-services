@@ -1,6 +1,9 @@
 package ru.xplago.authservice.exceptions;
 
+import com.google.gson.Gson;
+import io.grpc.Metadata;
 import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import net.devh.boot.grpc.server.advice.GrpcAdvice;
 import net.devh.boot.grpc.server.advice.GrpcExceptionHandler;
 
@@ -12,13 +15,8 @@ public class GrpcExceptionAdvice {
     }
 
     @GrpcExceptionHandler
-    public Status handleInvalidPasswordException(InvalidPasswordException exception) {
-        return Status.INVALID_ARGUMENT.withDescription(exception.getMessage());
-    }
-
-    @GrpcExceptionHandler
     public Status handleUserAlreadyExistsException(UserAlreadyExistsException exception) {
-        return Status.INVALID_ARGUMENT.withDescription(exception.getMessage());
+        return Status.ALREADY_EXISTS.withDescription(exception.getMessage());
     }
 
     @GrpcExceptionHandler

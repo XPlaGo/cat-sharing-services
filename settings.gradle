@@ -2,4 +2,7 @@ rootProject.name = 'cat-sharing-services'
 include 'common'
 include 'auth-service'
 include 'mail-service'
-
+include 'cat-service'
+include 'payment-service'
+include 'transaction-service'
+include 'trade-service'

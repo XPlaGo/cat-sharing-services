@@ -1,7 +1,6 @@
 package ru.xplago.authservice.controllers;
 
 import com.google.protobuf.Empty;
-import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +8,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import ru.xplago.authservice.entities.User;
+import ru.xplago.authservice.converters.UserInfoConverter;
 import ru.xplago.authservice.models.VerificationCodeModel;
 import ru.xplago.authservice.services.AuthRole;
 import ru.xplago.authservice.services.AuthService;
@@ -18,9 +17,9 @@ import ru.xplago.authservice.services.VerificationCodeService;
 import ru.xplago.authservice.services.dto.SignInDto;
 import ru.xplago.authservice.services.dto.SignUpDto;
 import ru.xplago.authservice.services.dto.TokenWithUserDto;
-import ru.xplago.authservice.services.dto.UserInfoDto;
 import ru.xplago.common.grpc.auth.*;
 import ru.xplago.common.grpc.security.annotations.Allow;
+import ru.xplago.common.grpc.security.exceptions.UnauthenticatedException;
 import ru.xplago.common.grpc.security.services.JwtService;
 import ru.xplago.common.grpc.security.services.dto.JwtData;
 
@@ -81,7 +80,7 @@ public class AuthController extends AuthServiceGrpc.AuthServiceImplBase {
                 signInRequest.getPassword()
         ));
 
-        UserInfo userInfo = parseUserInfo(dto);
+        UserInfo userInfo = UserInfoConverter.convert(dto.getUserInfo());
         responseObserver.onNext(
                 TokenWithUserResponse.newBuilder()
                         .setAccessToken(dto.getAccessToken())
@@ -100,15 +99,16 @@ public class AuthController extends AuthServiceGrpc.AuthServiceImplBase {
                 authentication.getName(),
                 signUpRequest.getName(),
                 signUpRequest.getPassword(),
-                java.sql.Timestamp.from(
-                        Instant.ofEpochSecond(
-                                signUpRequest.getBirthday().getSeconds(),
-                                signUpRequest.getBirthday().getNanos())
-                ),
+                signUpRequest.getBirthday().getSeconds() == 0 ? null :
+                        java.sql.Timestamp.from(
+                            Instant.ofEpochSecond(
+                                    signUpRequest.getBirthday().getSeconds(),
+                                    signUpRequest.getBirthday().getNanos())
+                    ),
                 signUpRequest.getAvatar()
         ));
 
-        UserInfo userInfo = parseUserInfo(dto);
+        UserInfo userInfo = UserInfoConverter.convert(dto.getUserInfo());
         responseObserver.onNext(
                 TokenWithUserResponse.newBuilder()
                         .setAccessToken(dto.getAccessToken())
@@ -120,11 +120,11 @@ public class AuthController extends AuthServiceGrpc.AuthServiceImplBase {
 
     @Allow(roles = {"ROLE_USER", "ROLE_ADMIN"})
     public void refresh(Empty empty, StreamObserver<TokenWithUserResponse> responseObserver) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = getUserId();
 
-        TokenWithUserDto dto = authService.refresh(authentication.getName());
+        TokenWithUserDto dto = authService.refresh(userId);
 
-        UserInfo userInfo = parseUserInfo(dto);
+        UserInfo userInfo = UserInfoConverter.convert(dto.getUserInfo());
         responseObserver.onNext(
                 TokenWithUserResponse.newBuilder()
                         .setAccessToken(dto.getAccessToken())
@@ -134,17 +134,12 @@ public class AuthController extends AuthServiceGrpc.AuthServiceImplBase {
         responseObserver.onCompleted();
     }
 
-    private static UserInfo parseUserInfo(TokenWithUserDto dto) {
-        return UserInfo.newBuilder()
-                .setId(dto.getUserInfo().getId())
-                .setEmail(dto.getUserInfo().getEmail())
-                .setName(dto.getUserInfo().getName())
-                .setBirthday(
-                        Timestamp.newBuilder()
-                                .setSeconds(dto.getUserInfo().getBirthdate().toInstant().getEpochSecond())
-                                .setNanos(dto.getUserInfo().getBirthdate().toInstant().getNano())
-                                .build())
-                .setAvatar(dto.getUserInfo().getAvatar())
-                .setIsBlocked(dto.getUserInfo().isBlocked()).build();
+    private Long getUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        try {
+            return Long.valueOf(authentication.getName());
+        } catch (NumberFormatException e) {
+            throw new UnauthenticatedException("Invalid user id passed in access token", e);
+        }
     }
 }

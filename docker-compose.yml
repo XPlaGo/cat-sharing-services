@@ -7,6 +7,11 @@ services:
       POSTGRES_PASSWORD: "postgres"
     ports:
       - "1001:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-U", "postgres", "-d", "catsharing" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   redis:
     image: redis
     restart: always
