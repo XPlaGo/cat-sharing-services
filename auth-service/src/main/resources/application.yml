@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://localhost:1001/catsharing
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring:
+          json:
+            type:
+              mapping: verificationCode:ru.xplago.authservice.models.VerificationCodeKafkaModel
+    jaas:
+      enabled: true
+    properties:
+      security:
+        protocol: SASL_PLAINTEXT
+      sasl:
+        mechanism: PLAIN
+        jaas:
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";
+
+
+grpc:
+  server:
+    port: ${AUTH_SERVICE_GRPC_PORT:9090}
+  jwt:
+    algorithm: HmacSHA256
+    secret: 357638792F423F4428472B4B6250655368566D597133743677397A2443264629
+    expiration-sec: 3600
+
+security:
+  verification-code:
+    expiration-sec: 60
+    refresh-sec: 30

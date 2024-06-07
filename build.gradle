@@ -1,0 +1,28 @@
+buildscript {
+    ext {
+        grpcVersion = '1.63.0'
+        protobufVersion = '3.25.3'
+        protobufGradlePluginVersion = '0.9.4'
+        grpcStarterVersion = '3.1.0.RELEASE'
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+group = 'ru.xplago'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}

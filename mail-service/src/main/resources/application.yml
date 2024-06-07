@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: mail-service
+  mail:
+    host: smtp.mail.ru
+    port: 587
+    username: security@catsharing.ru
+    password: iuyqkyq19YqNyXtrW3mv
+    transport:
+      protocol: smtp
+    properties:
+      mail:
+        smtp:
+          ssl:
+            trust: smtp.mail.ru
+          auth: true
+          starttls:
+            enable: true
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            type:
+              mapping: verificationCode:ru.xplago.mailservice.models.VerificationCodeKafkaModel
+#          deserializer:
+#            value:
+#              delegate:
+#                class: org.springframework.kafka.support.serializer.JsonDeserializer
+
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    jaas:
+      enabled: true
+    properties:
+      security:
+        protocol: SASL_PLAINTEXT
+      sasl:
+        mechanism: PLAIN
+        jaas:
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";

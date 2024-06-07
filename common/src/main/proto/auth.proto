@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package xplago;
+
+option java_package = "ru.xplago.common.grpc.auth";
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message SendEmailRequest {
+  string email = 1;
+}
+
+message SendVerificationCodeRequest {
+  string verificationCode = 1;
+}
+
+message SignUpRequest {
+  string name = 1;
+  google.protobuf.Timestamp birthday = 2;
+  string password = 3;
+  string avatar = 4;
+}
+
+message SignInRequest {
+  string password = 1;
+}
+
+message PlainTokenResponse {
+  string accessToken = 1;
+}
+
+message VerifiedTokenResponse {
+  string accessToken = 1;
+  bool userExists = 2;
+}
+
+message UserInfo {
+  int64 id = 1;
+  string email = 2;
+  string name = 3;
+  google.protobuf.Timestamp birthday = 4;
+  string avatar = 5;
+  bool isBlocked = 6;
+}
+
+message TokenWithUserResponse {
+  string accessToken = 1;
+  UserInfo userInfo = 2;
+}
+
+service AuthService {
+  rpc sendEmail(SendEmailRequest) returns (PlainTokenResponse);
+  rpc sendVerificationCode(SendVerificationCodeRequest) returns (VerifiedTokenResponse);
+  rpc signUp(SignUpRequest) returns (TokenWithUserResponse);
+  rpc signIn(SignInRequest) returns (TokenWithUserResponse);
+  rpc refresh(google.protobuf.Empty) returns (TokenWithUserResponse);
+}
