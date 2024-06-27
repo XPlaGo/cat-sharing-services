@@ -18,7 +18,25 @@ services:
         condition: service_started
       zookeeper:
         condition: service_started
-
+  mail-service:
+    build:
+      context: ./mail-service
+      dockerfile: Dockerfile
+      args:
+        JAR_FILE: build/libs/mail-service-0.0.1-SNAPSHOT.jar
+    ports:
+      - 9090:9090
+    environment:
+      DATASOURCE_URL: jdbc:postgresql://postgres:5432/catsharing
+      REDIS_HOST: redis
+      KAFKA_URL: kafka:9092
+    depends_on:
+      postgres:
+        condition: service_started
+      kafka:
+        condition: service_started
+      zookeeper:
+        condition: service_started
   postgres:
     image: postgres:latest
     environment:
