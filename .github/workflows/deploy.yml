@@ -6,6 +6,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build services images
-        run: docker run :auth-service:bootBuildImage
+        run: gradle :auth-service:bootBuildImage
       - name: Docker compose up
         run: docker-compose up
