@@ -24,8 +24,6 @@ services:
       dockerfile: Dockerfile
       args:
         JAR_FILE: build/libs/mail-service-0.0.1-SNAPSHOT.jar
-    ports:
-      - 9090:9090
     environment:
       DATASOURCE_URL: jdbc:postgresql://postgres:5432/catsharing
       REDIS_HOST: redis
