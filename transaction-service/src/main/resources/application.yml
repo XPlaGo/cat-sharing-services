@@ -2,9 +2,9 @@ spring:
   application:
     name: transaction-service
   datasource:
-    url: jdbc:postgresql://localhost:1001/catsharing
-    username: postgres
-    password: postgres
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:1001/catsharing}
+    username: ${DATASOURCE_USERNAME:postgres}
+    password: ${DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   jpa:
     database: postgresql
@@ -51,7 +51,7 @@ spring:
       sasl:
         mechanism: PLAIN
         jaas:
-          config: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_USERNAME:admin}" password="${KAFKA_PASSWORD:admin-secret}";
     streams:
       properties:
         default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
@@ -62,12 +62,12 @@ spring:
 
 grpc:
   server:
-    port: ${TRANSACTION_SERVICE_GRPC_PORT:9094}
+    port: ${GRPC_PORT:9094}
   client:
     paymentService:
       negotiation-type: PLAINTEXT
-      address: localhost:9093
+      address: ${PAYMENT_SERVICE_URL:localhost:9093}
   jwt:
     algorithm: HmacSHA256
-    secret: 357638792F423F4428472B4B6250655368566D597133743677397A2443264629
-    expiration-sec: 3600
+    secret: ${JWT_SECRET:357638792F423F4428472B4B6250655368566D597133743677397A2443264629}
+    expiration-sec: ${JWT_EXPIRATION:3600}

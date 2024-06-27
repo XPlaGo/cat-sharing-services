@@ -2,9 +2,9 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:1001/catsharing
-    username: postgres
-    password: postgres
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:1001/catsharing}
+    username: ${DATASOURCE_USERNAME:postgres}
+    password: ${DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   jpa:
     database: postgresql
@@ -14,9 +14,9 @@ spring:
       ddl-auto: update
   data:
     redis:
-      host: localhost
-      port: 6379
-      password: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81}
   kafka:
     consumer:
       auto-offset-reset: earliest
@@ -36,22 +36,23 @@ spring:
       sasl:
         mechanism: PLAIN
         jaas:
-          config: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_USERNAME:admin}" password="${KAFKA_PASSWORD:admin-secret}";
     streams:
       properties:
         default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
         default.value.serde: org.springframework.kafka.support.serializer.JsonSerde
         spring.json.trusted.packages: "*"
-
+    bootstrap-servers:
+      - ${KAFKA_URL:localhost:9092}
 grpc:
   server:
-    port: ${AUTH_SERVICE_GRPC_PORT:9090}
+    port: ${GRPC_PORT:9090}
   jwt:
     algorithm: HmacSHA256
-    secret: 357638792F423F4428472B4B6250655368566D597133743677397A2443264629
-    expiration-sec: 3600
+    secret: ${JWT_SECRET:357638792F423F4428472B4B6250655368566D597133743677397A2443264629}
+    expiration-sec: ${JWT_EXPIRATION:3600}
 
 security:
   verification-code:
-    expiration-sec: 60
-    refresh-sec: 30
+    expiration-sec: ${VERIFICATION_CODE_EXP:60}
+    refresh-sec: ${VERIFICATION_CODE_REFRESH_DUR:30}
