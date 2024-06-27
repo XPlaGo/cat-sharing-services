@@ -18,6 +18,8 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81}
   kafka:
+    bootstrap-servers:
+      - ${KAFKA_URL:localhost:9092}
     consumer:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -62,7 +64,7 @@ spring:
 
 grpc:
   server:
-    port: ${GRPC_PORT:9090}
+    port: ${GRPC_PORT:9093}
   client:
     userService:
       negotiation-type: PLAINTEXT
