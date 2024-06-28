@@ -13,11 +13,11 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="catsharing@localhost" uuid="aa9f3797-f53d-4155-a3b1-8f8f4bc54be3">
+    <data-source source="LOCAL" name="catsharing@79.174.80.75" uuid="aa9f3797-f53d-4155-a3b1-8f8f4bc54be3">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:1001/catsharing</jdbc-url>
+      <jdbc-url>jdbc:postgresql://79.174.80.75:1001/catsharing</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />

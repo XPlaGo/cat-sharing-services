@@ -1,6 +1,7 @@
 package ru.xplago.authservice.services;
 
 import lombok.AllArgsConstructor;
+import org.apache.kafka.common.Uuid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class AuthService {
     private JwtService jwtService;
     private CryptoService cryptoService;
     private ModelValidator modelValidator;
-    private KafkaTemplate<Long, UserActionModel> userActionKafkaTemplate;
+    private KafkaTemplate<String, UserActionModel> userActionKafkaTemplate;
 
     public TokenWithUserDto signIn(SignInDto signInDto) {
 
@@ -72,7 +73,7 @@ public class AuthService {
 
         userActionKafkaTemplate.send(
                 UserTopics.USER_ACTION,
-                user.getId(),
+                Uuid.randomUuid().toString(),
                 UserActionModel.builder()
                         .userId(user.getId())
                         .action(UserAction.USER_CREATED)
