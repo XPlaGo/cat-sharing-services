@@ -26,6 +26,9 @@ spring:
       properties:
         spring:
           json:
+            add:
+              type:
+                headers: false
             type:
               mapping: verificationCode:ru.xplago.mailservice.models.VerificationCodeKafkaModel
 #          deserializer:

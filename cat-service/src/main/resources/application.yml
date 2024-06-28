@@ -27,9 +27,9 @@ spring:
       properties:
         spring:
           json:
-#            add:
-#              type:
-#                headers: false
+            add:
+              type:
+                headers: false
             type:
               mapping: sdcReq:ru.xplago.common.kafka.models.sale.deal.SaleDealCatRequestModel,userAction:ru.xplago.common.kafka.models.user.UserActionModel
     producer:
