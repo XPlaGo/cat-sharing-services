@@ -14,7 +14,7 @@ import ru.xplago.common.kafka.models.user.UserActionModel;
 public class UserListener {
     private OwnerService ownerService;
 
-    @KafkaListener(topics = UserTopics.USER_ACTION, groupId = "cat")
+    @KafkaListener(id = "userAction", topics = UserTopics.USER_ACTION, groupId = "cat")
     public void listenUserAction(UserActionModel model) {
         switch (model.getAction()) {
             case USER_CREATED -> ownerService.createOwner(

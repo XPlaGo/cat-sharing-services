@@ -129,8 +129,6 @@ services:
       POSTGRES_PASSWORD: "postgres"
     ports:
       - "1001:5432"
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready", "-U", "postgres", "-d", "catsharing" ]
       interval: 10s

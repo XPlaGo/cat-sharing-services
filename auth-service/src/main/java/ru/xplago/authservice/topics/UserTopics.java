@@ -7,7 +7,7 @@ import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
 public class UserTopics {
-    public static String USER_ACTION = "userAction";
+    public static final String USER_ACTION = "userAction";
 
     @Bean
     public NewTopic userCreatedTopic() {
