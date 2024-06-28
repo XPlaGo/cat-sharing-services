@@ -1,29 +1,8 @@
 name: Cat Sharing deploy
 on: push
 jobs:
-  test:
-    runs-on: [self-hosted]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
-      - name: Build gradle project
-        run: sudo chmod u+x ./gradlew && ./gradlew clean :auth-service:build :cat-service:build :mail-service:build :payment-service:build :trade-service:build :transaction-service:build
-#      - name: Docker compose up
-#        uses: hoverkraft-tech/compose-action@v2.0.1
-#        with:
-#          compose-file: ./docker-compose.yml
-  prepare-environment:
-    runs-on: self-hosted
-    needs: test
-#    steps:
-#      - name: Stop and remove containers, networks
-#        run: docker compose down
-#      - name: Remove unused data
-#        run: docker system prune -a -f
   deploy:
     runs-on: self-hosted
-    needs: prepare-environment
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
