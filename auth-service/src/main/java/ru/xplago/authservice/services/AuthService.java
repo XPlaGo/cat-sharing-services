@@ -2,15 +2,19 @@ package ru.xplago.authservice.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.xplago.authservice.entities.User;
 import ru.xplago.authservice.entities.UserRole;
 import ru.xplago.authservice.exceptions.InvalidPasswordException;
 import ru.xplago.authservice.exceptions.UserNotFoundException;
 import ru.xplago.authservice.services.dto.*;
+import ru.xplago.authservice.topics.UserTopics;
 import ru.xplago.common.grpc.security.services.JwtService;
 import ru.xplago.common.grpc.security.services.dto.JwtData;
 import ru.xplago.common.grpc.validation.validators.ModelValidator;
+import ru.xplago.common.kafka.models.user.UserAction;
+import ru.xplago.common.kafka.models.user.UserActionModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +28,7 @@ public class AuthService {
     private JwtService jwtService;
     private CryptoService cryptoService;
     private ModelValidator modelValidator;
+    private KafkaTemplate<Long, UserActionModel> userActionKafkaTemplate;
 
     public TokenWithUserDto signIn(SignInDto signInDto) {
 
@@ -65,6 +70,15 @@ public class AuthService {
                 false
         ));
 
+        userActionKafkaTemplate.send(
+                UserTopics.USER_ACTION,
+                user.getId(),
+                UserActionModel.builder()
+                        .userId(user.getId())
+                        .action(UserAction.USER_CREATED)
+                        .build()
+        );
+
         String accessToken = jwtService.generate(new JwtData(
                 user.getId().toString(),
                 user.getRoles().stream().map(Enum::toString).collect(Collectors.toSet())
@@ -82,5 +96,10 @@ public class AuthService {
         ));
 
         return new TokenWithUserDto(accessToken, UserInfoDto.fromUser(user));
+    }
+
+    public void deleteUser(Long userId) {
+        User user = userService.findById(userId);
+        userService.delete(user);
     }
 }

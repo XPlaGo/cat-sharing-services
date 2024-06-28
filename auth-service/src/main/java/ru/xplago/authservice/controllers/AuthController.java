@@ -20,6 +20,7 @@ import ru.xplago.authservice.services.dto.TokenWithUserDto;
 import ru.xplago.common.grpc.auth.*;
 import ru.xplago.common.grpc.security.annotations.Allow;
 import ru.xplago.common.grpc.security.exceptions.UnauthenticatedException;
+import ru.xplago.common.grpc.security.resolvers.UserIdResolver;
 import ru.xplago.common.grpc.security.services.JwtService;
 import ru.xplago.common.grpc.security.services.dto.JwtData;
 
@@ -120,7 +121,7 @@ public class AuthController extends AuthServiceGrpc.AuthServiceImplBase {
 
     @Allow(roles = {"ROLE_USER", "ROLE_ADMIN"})
     public void refresh(Empty empty, StreamObserver<TokenWithUserResponse> responseObserver) {
-        Long userId = getUserId();
+        Long userId = UserIdResolver.resolve();
 
         TokenWithUserDto dto = authService.refresh(userId);
 
@@ -132,14 +133,5 @@ public class AuthController extends AuthServiceGrpc.AuthServiceImplBase {
                         .build()
         );
         responseObserver.onCompleted();
-    }
-
-    private Long getUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        try {
-            return Long.valueOf(authentication.getName());
-        } catch (NumberFormatException e) {
-            throw new UnauthenticatedException("Invalid user id passed in access token", e);
-        }
     }
 }

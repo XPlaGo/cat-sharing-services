@@ -56,4 +56,8 @@ public class OwnerService {
     public boolean existsByUserId(Long id) {
         return ownerRepository.existsByUserId(id);
     }
+
+    public void deleteByUserId(Long id) {
+        ownerRepository.deleteByUserId(id);
+    }
 }
