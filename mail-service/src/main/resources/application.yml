@@ -26,11 +26,9 @@ spring:
       properties:
         spring:
           json:
-            add:
-              type:
-                headers: false
+            trusted.packages: "*"
             type:
-              mapping: verificationCode:ru.xplago.mailservice.models.VerificationCodeKafkaModel,userAction:ru.xplago.common.kafka.models.user.UserActionModel
+              mapping: verificationCode:ru.xplago.mailservice.models.VerificationCodeKafkaModel
 #          deserializer:
 #            value:
 #              delegate:
