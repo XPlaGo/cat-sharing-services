@@ -26,16 +26,12 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring:
-          deserializer:
-            value:
-              delegate:
-                class: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
           json:
 #            add:
 #              type:
 #                headers: false
             type:
-              mapping: sdcReq:ru.xplago.common.kafka.models.sale.deal.SaleDealCatRequestModel
+              mapping: sdcReq:ru.xplago.common.kafka.models.sale.deal.SaleDealCatRequestModel,userAction:ru.xplago.common.kafka.models.user.UserActionModel
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

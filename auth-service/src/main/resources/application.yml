@@ -26,8 +26,11 @@ spring:
       properties:
         spring:
           json:
+            add:
+              type:
+                headers: false
             type:
-              mapping: verificationCode:ru.xplago.authservice.models.VerificationCodeKafkaModel
+              mapping: verificationCode:ru.xplago.authservice.models.VerificationCodeKafkaModel,userAction:ru.xplago.common.kafka.models.user.UserActionModel
     jaas:
       enabled: true
     properties:
