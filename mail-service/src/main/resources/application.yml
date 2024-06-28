@@ -30,7 +30,7 @@ spring:
               type:
                 headers: false
             type:
-              mapping: verificationCode:ru.xplago.mailservice.models.VerificationCodeKafkaModel
+              mapping: verificationCode:ru.xplago.mailservice.models.VerificationCodeKafkaModel,userAction:ru.xplago.common.kafka.models.user.UserActionModel
 #          deserializer:
 #            value:
 #              delegate:
