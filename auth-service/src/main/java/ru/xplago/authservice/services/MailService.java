@@ -8,6 +8,7 @@ import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import ru.xplago.authservice.models.VerificationCodeKafkaModel;
+import org.apache.kafka.common.Uuid;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -24,6 +25,6 @@ public class MailService {
     }
 
     public void sendVerificationCode(String email, String verificationCode) {
-        kafkaTemplate.send("verificationCode", new VerificationCodeKafkaModel(email, verificationCode));
+        kafkaTemplate.send("verificationCode", Uuid.randomUuid().toString(), new VerificationCodeKafkaModel(email, verificationCode));
     }
 }

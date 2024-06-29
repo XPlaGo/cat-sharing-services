@@ -19,24 +19,28 @@ spring:
   kafka:
     bootstrap-servers:
       - ${KAFKA_URL:localhost:9092}
-    consumer:
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    # consumer:
+    #   auto-offset-reset: earliest
+    #   key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    #   value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    #   properties:
+    #     spring:
+    #       json:
+    #         type:
+    #           mapping: verificationCode:ru.xplago.mailservice.models.VerificationCodeKafkaModel
+    #         trusted.packages: ru.xplago
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring:
           json:
-            trusted.packages: "*"
+            add:
+              type:
+                headers: false
             type:
               mapping: verificationCode:ru.xplago.mailservice.models.VerificationCodeKafkaModel
-#          deserializer:
-#            value:
-#              delegate:
-#                class: org.springframework.kafka.support.serializer.JsonDeserializer
-
-#    producer:
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+            trusted.packages: ru.xplago
     jaas:
       enabled: true
     properties:
@@ -50,4 +54,5 @@ spring:
       properties:
         default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
         default.value.serde: org.springframework.kafka.support.serializer.JsonSerde
-        spring.json.trusted.packages: "*"
+        spring.json.trusted.packages: ru.xplago.common.kafka.models
+        spring.json.add.type.headers: false

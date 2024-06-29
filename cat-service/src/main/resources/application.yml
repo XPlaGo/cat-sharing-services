@@ -52,6 +52,12 @@ spring:
         mechanism: PLAIN
         jaas:
           config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_USERNAME:admin}" password="${KAFKA_PASSWORD:admin-secret}";
+    streams:
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.springframework.kafka.support.serializer.JsonSerde
+        spring.json.trusted.packages: ru.xplago
+        spring.json.add.type.headers: false
 
 
 grpc:
