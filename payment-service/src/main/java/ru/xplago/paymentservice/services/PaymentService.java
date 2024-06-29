@@ -67,6 +67,34 @@ public class PaymentService {
     }
 
     @Transactional
+    public TransactionModel replenish(TransactionModel transactionModel) {
+        PaymentAccount receiverAccount = paymentAccountRepository.findById(
+                transactionModel.getReceiverAccountId()
+        ).orElseThrow(() -> new TransactionValidationException("Invalid receiver account id", "receiverAccountId", "Invalid account id"));
+
+        if (transactionModel.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new TransactionValidationException("Invalid amount", "amount", "Amount value must be greater than zero");
+        }
+
+        Uuid transactionId = Uuid.randomUuid();
+
+        receiverAccount.setAmount(receiverAccount.getAmount().add(transactionModel.getAmount()));
+
+        paymentAccountRepository.save(receiverAccount);
+
+        return TransactionModel.builder()
+                .id(transactionId.toString())
+                .amount(transactionModel.getAmount())
+                .senderAccountId(transactionModel.getSenderAccountId())
+                .receiverAccountId(transactionModel.getReceiverAccountId())
+                .status(TransactionModelStatus.SUCCESS.name())
+                .comment(transactionModel.getComment())
+                .created(Timestamp.from(Instant.now()))
+                .modified(Timestamp.from(Instant.now()))
+                .build();
+    }
+
+    @Transactional
     public TransactionModel rollback(String transactionId) {
 
         TransactionDataInfo transaction = transactionService.getTransactionById(transactionId);

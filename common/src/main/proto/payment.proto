@@ -56,6 +56,12 @@ message TransferRequest {
   optional string comment = 4;
 }
 
+message ReplenishRequest {
+  string receiverAccountId = 1;
+  Money amount = 2;
+  optional string comment = 3;
+}
+
 message TransactionInfo {
   string id = 1;
   string status = 2;
@@ -63,5 +69,6 @@ message TransactionInfo {
 
 service PaymentService {
   rpc transfer(TransferRequest) returns (stream TransactionInfo);
+  rpc replenish(ReplenishRequest) returns (stream TransactionInfo);
   rpc rollback(google.protobuf.StringValue) returns (google.protobuf.Empty);
 }

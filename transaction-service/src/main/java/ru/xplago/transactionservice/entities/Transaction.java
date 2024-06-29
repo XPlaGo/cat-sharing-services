@@ -23,10 +23,8 @@ public class Transaction {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @Column(nullable = false)
     private String senderAccountId;
 
-    @Column(nullable = false)
     private String receiverAccountId;
 
     @Column(nullable = false)

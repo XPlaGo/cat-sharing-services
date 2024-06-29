@@ -9,6 +9,7 @@ import org.apache.kafka.common.Uuid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import ru.xplago.common.grpc.payment.PaymentServiceGrpc;
+import ru.xplago.common.grpc.payment.ReplenishRequest;
 import ru.xplago.common.grpc.payment.TransactionInfo;
 import ru.xplago.common.grpc.payment.TransferRequest;
 import ru.xplago.common.grpc.security.resolvers.UserIdResolver;
@@ -58,6 +59,11 @@ public class PaymentController extends PaymentServiceGrpc.PaymentServiceImplBase
                 .modified(Timestamp.from(Instant.now()))
                 .build();
 
+        if (!paymentAccountService.existsByIdAndUserId(request.getSenderAccountId(), userId)) {
+            onTransactionExceptionHandler(responseObserver, transactionModel);
+            return;
+        }
+
         responseObserver.onNext(
                 TransactionInfo.newBuilder()
                         .setId(transactionModel.getId())
@@ -68,6 +74,57 @@ public class PaymentController extends PaymentServiceGrpc.PaymentServiceImplBase
         TransactionModel resultTransactionModel;
         try {
             resultTransactionModel = paymentService.transfer(transactionModel);
+        } catch (TransactionValidationException | TransactionException | NotFoundException exception) {
+            onTransactionExceptionHandler(responseObserver, transactionModel);
+            return;
+        }
+
+        TransactionInfo transactionInfo = TransactionInfo.newBuilder()
+                .setId(resultTransactionModel.getId())
+                .setStatus(resultTransactionModel.getStatus())
+                .build();
+
+        responseObserver.onNext(transactionInfo);
+
+        transactionModelKafkaTemplate.send(TransactionTopics.TRANSACTION_TOPIC, resultTransactionModel.getId(), resultTransactionModel);
+
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void replenish(ReplenishRequest request, StreamObserver<TransactionInfo> responseObserver) {
+        Long userId = UserIdResolver.resolve();
+
+        Uuid transactionId = Uuid.randomUuid();
+
+        BigDecimal amount = MoneyConverter.convert(request.getAmount());
+
+        TransactionModel transactionModel = TransactionModel.builder()
+                .id(transactionId.toString())
+                .amount(amount)
+                .senderAccountId(null)
+                .receiverAccountId(request.getReceiverAccountId())
+                .comment(request.getComment())
+                .status(TransactionModelStatus.PENDING.name())
+                .created(Timestamp.from(Instant.now()))
+                .modified(Timestamp.from(Instant.now()))
+                .build();
+
+        if (!paymentAccountService.existsByIdAndUserId(request.getReceiverAccountId(), userId)) {
+            onTransactionExceptionHandler(responseObserver, transactionModel);
+            return;
+        }
+
+        responseObserver.onNext(
+                TransactionInfo.newBuilder()
+                        .setId(transactionModel.getId())
+                        .setStatus(transactionModel.getStatus())
+                        .build()
+        );
+
+        TransactionModel resultTransactionModel;
+        try {
+            resultTransactionModel = paymentService.replenish(transactionModel);
         } catch (TransactionValidationException | TransactionException | NotFoundException exception) {
             onTransactionExceptionHandler(responseObserver, transactionModel);
             return;

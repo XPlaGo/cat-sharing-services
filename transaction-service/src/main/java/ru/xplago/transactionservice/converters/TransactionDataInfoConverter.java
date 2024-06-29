@@ -6,11 +6,9 @@ import ru.xplago.transactionservice.entities.Transaction;
 
 public class TransactionDataInfoConverter {
     public static TransactionDataInfo convert(Transaction transaction) {
-        return TransactionDataInfo.newBuilder()
+        TransactionDataInfo.Builder builder = TransactionDataInfo.newBuilder()
                 .setId(transaction.getId())
                 .setAmount(MoneyConverter.convert(transaction.getAmount()))
-                .setSenderAccountId(transaction.getSenderAccountId())
-                .setReceiverAccountId(transaction.getReceiverAccountId())
                 .setComment(transaction.getComment())
                 .setStatus(transaction.getStatus().name())
                 .setCreated(Timestamp.newBuilder()
@@ -22,7 +20,9 @@ public class TransactionDataInfoConverter {
                         .setSeconds(transaction.getModified().toInstant().getEpochSecond())
                         .setNanos(transaction.getModified().toInstant().getNano())
                         .build()
-                )
-                .build();
+                );
+        if (transaction.getSenderAccountId() != null) builder.setSenderAccountId(transaction.getSenderAccountId());
+        if (transaction.getReceiverAccountId() != null) builder.setReceiverAccountId(transaction.getReceiverAccountId());
+        return builder.build();
     }
 }
