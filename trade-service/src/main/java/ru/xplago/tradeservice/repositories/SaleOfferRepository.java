@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SaleOfferRepository extends JpaRepository<SaleOffer, String> {
-    Optional<SaleOffer> getByCatIdAndSellerOwnerId(Long catId, Long sellerId);
+    Optional<SaleOffer> getByCatIdAndSellerOwnerIdAndStatus(Long catId, Long sellerId, SaleOfferStatus status);
     boolean existsByCatId(Long catId);
     boolean existsByCatIdAndStatus(Long catId, SaleOfferStatus status);
     List<SaleOffer> findAllByStatusAndSellerOwnerIdNot(SaleOfferStatus status, Long sellerId);

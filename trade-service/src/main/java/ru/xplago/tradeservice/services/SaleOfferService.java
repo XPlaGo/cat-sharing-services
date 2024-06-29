@@ -60,9 +60,9 @@ public class SaleOfferService {
                 .orElseThrow(() -> new NotFoundException("Sale offer not found"));
     }
 
-    public SaleOffer getByCatIdAndOwnerId(Long id, Long ownerId) {
+    public SaleOffer getByCatIdAndOwnerIdAndStatus(Long id, Long ownerId, SaleOfferStatus status) {
         return saleOfferRepository
-                .getByCatIdAndSellerOwnerId(id, ownerId)
+                .getByCatIdAndSellerOwnerIdAndStatus(id, ownerId, status)
                 .orElseThrow(() -> new NotFoundException("Sale offer not found"));
     }
 

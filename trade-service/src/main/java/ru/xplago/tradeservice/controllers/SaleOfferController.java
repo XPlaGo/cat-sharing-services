@@ -103,7 +103,7 @@ public class SaleOfferController extends SaleOfferServiceGrpc.SaleOfferServiceIm
         Long userId = UserIdResolver.resolve();
 
         OwnerInfo ownerInfo = ownerService.getOwnerByUserId(userId);
-        SaleOffer saleOffer = saleOfferService.getByCatIdAndOwnerId(request.getValue(), ownerInfo.getId());
+        SaleOffer saleOffer = saleOfferService.getByCatIdAndOwnerIdAndStatus(request.getValue(), ownerInfo.getId(), SaleOfferStatus.OPENED);
 
         responseObserver.onNext(SaleOfferInfoConverter.convert(saleOffer));
         responseObserver.onCompleted();
